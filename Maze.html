@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Game</title>
+    <link rel="stylesheet" href="styles2.css">
+    <style>
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            padding-top: 60px;
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+   <audio id="backgroundMusic" loop>
+    <source src="https://codehs.com/uploads/0b3c56369e71352b6ac7840ea366fbf8" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
+<audio id="twinkleSound">
+    <source src="https://freesound.org/people/adam-n/sets/21737/" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
+   
+<div id="highScoreDisplay">High Score: 0</div>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <div id="scoreDisplay">Score: 0</div>
+    <button id="startButton">Start!</button>
+    <button id="stopButton" disabled>Stop Playing</button>
+     <input type="checkbox" id="audioToggle">
+    <label for="audioToggle">Sound</label> 
+</div><button id="homeButton">Home</button>
+    <button id="instructionsButton">Instructions</button> 
+
+    <!-- Instructions Modal -->
+    <div id="instructionsModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Instructions</h2>
+           <p>
+                <br>Click the "Start!" to begin the game. 
+                <br>Collect stars as they fall. 
+                <br>Answer questions correctly to continue. 
+                <br>Avoid the red bricks or lose a turn. 
+                <br>Use the left and right side of the screen to move your buddy. 
+                <br>Try to get the highest score possible! 
+            
+            Good luck!</p>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+    <script>
+        var modal = document.getElementById("instructionsModal");
+        var btn = document.getElementById("instructionsButton");
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks the button, open the modal 
+        btn.onclick = function() {
+            modal.style.display = "block";
+        }
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>

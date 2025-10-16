@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Multiply Quest!</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', sans-serif;
+            background-image: url('https://codehs.com/uploads/3692af870631e3dbde1bf821b0cb1e0e');
+            background-size: cover; 
+            background-position: center; background-repeat: no-repeat; /* Prevents the image from tiling */
+    width: 100%;
+    height: 100%; /* Make this container fill the entire viewport */
+    display: flex; /* Use flexbox to center content vertically */
+    flex-direction: column; /* Stack content vertically */
+    justify-content: center; /* Center content vertically */
+    align-items: center; /* Center content horizontally */
+    text-align: center; /* Center text within content blocks */
+    box-sizing: border-box; /* Include padding in element's total width and height */
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+            animation: background 10s infinite alternate; 
+            position: relative; /* Added for positioning elements */
+        }
+        
+        h1 {
+            color: black; 
+            font-size: 3em; 
+            text-shadow: 3px 3px #ffa500; 
+            animation: bounce 1s infinite; 
+        }
+        
+        .description {
+            font-size: 1.2em;
+            margin: 20px 0;
+            color: black;
+            animation: fadeIn 2s;
+        }
+        
+        .canvas {
+            border: 2px solid red;
+            background-color: white; 
+            padding: 20px;
+            margin: 0 auto;
+            display: inline-block; 
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); 
+            border-radius: 50%; 
+        }
+        .canvas2 {
+            border: 2px solid red;
+            background-color: white; 
+            padding: 20px;
+            margin: 0 auto;
+            display: inline-block; 
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); 
+             
+        }
+        
+        .characters {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .character {
+            margin: 0 10px;
+            width: 100px; 
+            height: 100px; 
+            border: 2px solid #000; 
+            border-radius: 10px; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column; 
+            overflow: hidden; 
+            cursor: pointer; 
+            background-color: white; 
+        }
+        
+        .character:hover {
+            animation: swing 1s; 
+        }
+        
+        .character img {
+            max-width: 100%; 
+            max-height: 80%; 
+            border-radius: 10px; 
+        }
+        
+        .character h2 {
+            font-size: 1.3em; 
+            margin: 5px 0 0; 
+        }
+        
+        .selected {
+            border: 3px solid #ff4500; 
+        }
+        
+        .footer {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #555; 
+        }
+        
+        button {
+            background-color: #32cd32; 
+            color: white;
+            border: none;
+            padding: 15px 30px; 
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 20px; 
+            margin: 20px;
+            transition: background-color 0.3s, transform 0.3s; 
+            font-weight: bold;
+        }
+        
+        button:hover {
+            background-color: #228b22; 
+            transform: scale(1.1) rotate(5deg); 
+        }
+        
+        /* Checkbox styling */
+        .music-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+        }
+        
+        .music-checkbox {
+            cursor: pointer;
+            width: 20px; 
+            height: 20px; 
+            margin-left: 10px; 
+        }
+    </style>
+</head>
+<body>
+    <audio id="backgroundMusic" loop>
+        <source src="https://codehs.com/uploads/0b3c56369e71352b6ac7840ea366fbf8" type="audio/mpeg">
+        Your browser does not support the audio tag.
+    </audio>
+
+    <div class="canvas2">
+        <h1>Welcome to Multiply Quest!</h1>
+    </div>
+
+    <!-- Music Control Section -->
+    <div class="music-controls">
+        <input type="checkbox" class="music-checkbox" id="musicToggle">
+        <span>Music</span>
+    </div>
+
+    <div class="canvas">
+        <div class="description">
+            Pick your Buddy
+        </div>
+    </div>
+    
+    <div class="characters" id="characterContainer">
+        <div class="character" onclick="selectCharacter('Benny', 'bear.jpeg', this)">
+            <img src="bear.jpeg" alt="Character 1"> 
+            <h2>Benny</h2>
+        </div>
+        <div class="character" onclick="selectCharacter('Max', 'Mouse.jpeg', this)">
+            <img src="Mouse.jpeg" alt="Character 2"> 
+            <h2>Max</h2>
+        </div>
+        <div class="character" onclick="selectCharacter('Lionel', 'lion.jpeg', this)">
+            <img src="lion.jpeg" alt="Character 3"> 
+            <h2>Lionel</h2>
+        </div>
+    </div>
+
+    <button id="startButton" onclick="startGame()"> Quiz</button>
+    <button onclick="startFlappyQuiz()"> Game</button>
+    <button onclick="goToFlashCards()"> Flash Cards</button>
+ <br>
+ <a href="Copyright.html" class="button">Copyright</a>
+    <script>
+        let selectedCharacter = null;
+        let characterImage = '';
+        const music = document.getElementById('backgroundMusic');
+
+        // Function to select character
+        function selectCharacter(characterName, imgSrc, element) {
+            if (selectedCharacter) {
+                selectedCharacter.classList.remove('selected');
+            }
+            selectedCharacter = element;
+            selectedCharacter.classList.add('selected');
+            characterImage = imgSrc; 
+            alert("You have selected: " + characterName); 
+        }
+
+        // Function to start quiz
+        function startGame() {
+            if (!characterImage) {
+                alert("Please select a character first!");
+                return;
+            }
+            localStorage.setItem('selectedCharacter', characterImage);
+            window.location.href = 'Quiz.html'; // Redirect to game screen
+        }
+
+        // Function to start flappy quiz
+        function startFlappyQuiz() {
+            if (!characterImage) {
+                alert("Please select a character first!");
+                return;
+            }
+            localStorage.setItem('selectedCharacter', characterImage);
+            window.location.href = 'Maze.html'; 
+        }
+
+        // Function to go to flashcards
+        function goToFlashCards() {
+            if (!characterImage) {
+                alert("Please select a character first!");
+                return;
+            }
+            localStorage.setItem('selectedCharacter', characterImage);
+            window.location.href = 'FlashCards.html'; 
+        }
+
+        // Toggle music on checkbox change
+        document.getElementById('musicToggle').addEventListener('change', function() {
+            if (this.checked) {
+                music.play().catch(error => {
+                    console.error("Error playing music:", error);
+                });
+            } else {
+                music.pause();
+            }
+        });
+
+        // Play music if checkbox is checked when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            if (document.getElementById('musicToggle').checked) {
+                music.play().catch(error => {
+                    console.error("Error playing music:", error);
+                });
+            }
+        });
+    </script>
+</body>
+</html>

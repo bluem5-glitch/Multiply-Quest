@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Flashcards</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', sans-serif;
+            background-color: Lightblue;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh; /* Ensure body takes full viewport height */
+            justify-content: center; /* Center content vertically */
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+        }
+        .character-image {
+            margin-bottom: 20px;
+            max-width: 150px;
+            border: 2px solid #333;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .flashcard {
+            margin-top: 20px;
+            flex-grow: 1; /* Allow flashcard to grow and push buttons down */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%; /* Take full width for centering */
+        }
+        .card {
+            perspective: 1000px;
+            margin: 0 auto;
+            width: 300px;
+            height: 200px;
+            position: relative; /* Needed for absolute positioning of faces */
+        }
+        .face {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 48px;
+            background-color: white;
+            border: 1px solid #333;
+            border-radius: 10px;
+            position: absolute;
+            backface-visibility: hidden;
+            transition: transform 0.6s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* Add subtle shadow */
+            padding: 10px; /* Add padding for text */
+            box-sizing: border-box; /* Include padding in width/height */
+        }
+        .back {
+            transform: rotateY(180deg);
+        }
+        .flipped .face.front {
+            transform: rotateY(180deg);
+        }
+        .flipped .face.back {
+            transform: rotateY(0deg);
+        }
+        .base-selection-buttons, .game-buttons {
+            display: flex;
+            flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+            justify-content: center;
+            margin-top: 20px;
+            gap: 15px; /* Space between buttons */
+            max-width: 900px; /* Limit width for better layout on large screens */
+        }
+        button {
+            background-color: #32cd32; /* LimeGreen */
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 20px;
+            transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* Button shadow */
+        }
+        button:hover {
+            background-color: #228b22; /* ForestGreen */
+            transform: scale(1.05) rotate(2deg); /* Slightly less dramatic hover */
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+        button:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .music-controls {
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            color: #333;
+        }
+        .music-controls input[type="checkbox"] {
+            transform: scale(1.5); /* Make checkbox larger */
+            margin-right: 5px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+            .character-image {
+                max-width: 120px;
+            }
+            .card {
+                width: 280px;
+                height: 180px;
+                font-size: 40px;
+            }
+            button {
+                padding: 12px 25px;
+                font-size: 18px;
+            }
+            .music-controls {
+                font-size: 16px;
+            }
+            .base-selection-buttons {
+                gap: 10px; /* Smaller gap on smaller screens */
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            .character-image {
+                max-width: 100px;
+            }
+            .card {
+                width: 240px;
+                height: 160px;
+                font-size: 36px;
+            }
+            button {
+                padding: 10px 20px;
+                font-size: 16px;
+                width: calc(50% - 15px); /* Two buttons per row on very small screens */
+            }
+            .base-selection-buttons {
+                flex-direction: row; /* Keep row for wrapping */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Flash Cards - Times Tables</h1>
+    <img id="characterImage" class="character-image" src="" alt="Character Image">
+
+    <div class="music-controls">
+        <input type="checkbox" id="musicToggle" checked>
+        <label for="musicToggle">Music Enabled</label>
+    </div>
+
+    <div class="base-selection-buttons">
+        <!-- Buttons for 1 to 12 Times Tables will be dynamically generated or hardcoded -->
+        <button id="base1Button">1</button>
+        <button id="base2Button">2 </button>
+        <button id="base3Button">3 </button>
+        <button id="base4Button">4 </button>
+        <button id="base5Button">5 </button>
+        <button id="base6Button">6 </button>
+        <button id="base7Button">7 </button>
+        <button id="base8Button">8 </button>
+        <button id="base9Button">9 </button>
+        <button id="base10Button">10 </button>
+        <button id="base11Button">11 </button>
+        <button id="base12Button">12 </button>
+    </div>
+
+    <div class="flashcard">
+        <div class="card" id="card" style="display: none;">
+            <div class="face front" id="questionDisplay"></div>
+            <div class="face back" id="answerDisplay"></div>
+        </div>
+    </div>
+
+    <div class="game-buttons" style="display: none;">
+        <button id="flipCardButton">Flip Card</button>
+        <button id="nextCardButton">Next Card</button>
+    </div>
+
+    <button id="backButton" onclick="location.href='index.html'">Back to Start</button>
+
+    <audio id="backgroundMusic" loop>
+        <source src="https://codehs.com/uploads/0b3c56369e71352b6ac7840ea366fbf8" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // Global variables for game state
+        let currentQuestionIndex = 0;
+        const totalQuestions = 999; // A large number to ensure continuous play
+        let questions = []; // Stores the multiplication questions and answers
+
+        // Get DOM elements
+        const music = document.getElementById('backgroundMusic');
+        const cardElement = document.getElementById("card");
+        const questionDisplay = document.getElementById("questionDisplay");
+        const answerDisplay = document.getElementById("answerDisplay");
+        const flipCardButton = document.getElementById("flipCardButton");
+        const nextCardButton = document.getElementById("nextCardButton");
+        const musicToggle = document.getElementById('musicToggle');
+        const characterImageElement = document.getElementById("characterImage");
+        const baseSelectionButtonsDiv = document.querySelector('.base-selection-buttons');
+        const gameButtonsDiv = document.querySelector('.game-buttons');
+
+        /**
+         * Generates an array of random multiplication questions for a specific times table.
+         * Questions will be in the format: `fixedFactor x randomMultiplier`.
+         * The randomMultiplier will range from 1 to maxMultiplier.
+         * The total number of questions generated is `num`.
+         * @param {number} num The number of questions to generate.
+         * @param {number} fixedFactor The specific number for the times table (e.g., 2 for '2 Times Tables').
+         * @param {number} maxMultiplier The maximum number for the second factor in the multiplication (e.g., 12).
+         * @returns {Array<Object>} An array of question objects.
+         */
+        function generateQuestions(num, fixedFactor, maxMultiplier) {
+            const questionsArray = [];
+            for (let i = 0; i < num; i++) {
+                const multiplier = Math.floor(Math.random() * maxMultiplier) + 1; // Multiplier from 1 to maxMultiplier
+                questionsArray.push({ question: `${fixedFactor} x ${multiplier}`, answer: fixedFactor * multiplier });
+            }
+            return questionsArray;
+        }
+
+        /**
+         * Displays the current question and answer on the flashcard.
+         */
+        function displayQuestion() {
+            if (currentQuestionIndex < totalQuestions) {
+                const current = questions[currentQuestionIndex];
+                questionDisplay.innerText = current.question;
+                answerDisplay.innerText = current.answer;
+            } else {
+                endGame();
+            }
+        }
+
+        /**
+         * Handles the click event for the "Flip Card" button.
+         * Toggles the 'flipped' class on the card element to show/hide the answer.
+         */
+        flipCardButton.addEventListener("click", function () {
+            cardElement.classList.toggle("flipped");
+        });
+
+        /**
+         * Handles the click event for the "Next Card" button.
+         * Advances to the next question, resets the card flip, and displays the new question.
+         */
+        nextCardButton.addEventListener("click", function () {
+            currentQuestionIndex++;
+            displayQuestion();
+            cardElement.classList.remove("flipped"); // Ensure card is unflipped for new question
+        });
+
+        /**
+         * Initializes questions and display for a selected times table base.
+         * This function is called when a base selection button is clicked.
+         * @param {number} base The specific number for the times table (e.g., 5 for '5 Times Tables').
+         */
+        function setBase(base) {
+            const fixedFactor = base;
+            const maxMultiplier = 12; // Times tables typically go up to 12
+            questions = generateQuestions(totalQuestions, fixedFactor, maxMultiplier); // Regenerate questions for the new base
+            currentQuestionIndex = 0; // Reset question index
+
+            // Show flashcard and game control buttons
+            cardElement.style.display = 'block';
+            gameButtonsDiv.style.display = 'flex'; // Use flex to maintain button layout
+
+            // Hide base selection buttons
+            baseSelectionButtonsDiv.style.display = 'none';
+
+            cardElement.classList.remove("flipped"); // Unflip card
+            displayQuestion(); // Display the first question for the new times table
+        }
+
+        // Add event listeners for all 12 base selection buttons
+        for (let i = 1; i <= 12; i++) {
+            const button = document.getElementById(`base${i}Button`);
+            if (button) { // Check if the button exists before adding listener
+                button.addEventListener("click", () => setBase(i));
+            }
+        }
+
+        /**
+         * Ends the game, displaying a "Game Over" message and hiding flashcard elements.
+         */
+        function endGame() {
+            questionDisplay.innerText = `Game Over! You've gone through all ${totalQuestions} flashcards.`;
+            answerDisplay.innerText = ''; // Clear answer
+            cardElement.style.display = 'none'; // Hide the card
+            gameButtonsDiv.style.display = 'none'; // Hide game control buttons
+        }
+
+        /**
+         * Initializes the application when the DOM is fully loaded.
+         * Sets up character image, music, and initial display states.
+         */
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load character image from localStorage, or use a placeholder
+            const characterImageSrc = localStorage.getItem('selectedCharacter');
+            characterImageElement.src = characterImageSrc ? characterImageSrc : 'https://placehold.co/150x150/EEEEEE/333333?text=Character';
+
+            // Music control setup
+            if (musicToggle.checked) {
+                music.play().catch(error => {
+                    console.error("Error playing music:", error);
+                });
+            }
+
+            // Event listener for music toggle
+            musicToggle.addEventListener('change', function() {
+                if (this.checked) {
+                    music.play().catch(error => {
+                        console.error("Error playing music:", error);
+                    });
+                } else {
+                    music.pause();
+                }
+            });
+
+            // Initial state: Hide game buttons and card, show base selection
+            cardElement.style.display = 'none';
+            gameButtonsDiv.style.display = 'none';
+            baseSelectionButtonsDiv.style.display = 'flex'; // Ensure base selection is visible initially
+        });
+    </script>
+
+</body>
+</html>
